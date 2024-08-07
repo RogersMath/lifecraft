@@ -1,41 +1,52 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useGame, ActionTypes } from '../context/GameContext';
 
 function GameSetup() {
-  const [playerName, setPlayerName] = useState('');
+  const { dispatch } = useGame();
+  const navigate = useNavigate();
   const [startingAge, setStartingAge] = useState(16);
+  const [difficulty, setDifficulty] = useState('normal');
 
   const handleStartGame = () => {
-    // TODO: Initialize game state with player name and starting age
-    console.log(`Starting game for ${playerName} at age ${startingAge}`);
-    // TODO: Redirect to GamePlay component
+    dispatch({
+      type: ActionTypes.UPDATE_GAME_SETTINGS,
+      payload: { startingAge, difficulty },
+    });
+    dispatch({
+      type: ActionTypes.UPDATE_PLAYER,
+      payload: { age: startingAge },
+    });
+    navigate('/play');
   };
 
   return (
     <div>
-      <h1>LifeCraft: Game Setup</h1>
-      <div>
-        <label htmlFor="playerName">Your Name: </label>
-        <input 
-          type="text" 
-          id="playerName" 
-          value={playerName} 
-          onChange={(e) => setPlayerName(e.target.value)}
-        />
-      </div>
+      <h1>Game Setup</h1>
       <div>
         <label htmlFor="startingAge">Starting Age: </label>
-        <input 
-          type="number" 
-          id="startingAge" 
-          value={startingAge} 
+        <input
+          type="number"
+          id="startingAge"
+          value={startingAge}
           onChange={(e) => setStartingAge(Number(e.target.value))}
-          min="16" 
+          min="16"
           max="80"
         />
       </div>
+      <div>
+        <label htmlFor="difficulty">Difficulty: </label>
+        <select
+          id="difficulty"
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value)}
+        >
+          <option value="easy">Easy</option>
+          <option value="normal">Normal</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
       <button onClick={handleStartGame}>Start Game</button>
-      <Link to="/">Back to Home</Link>
     </div>
   );
 }
